@@ -1,6 +1,7 @@
 package com.example.jo.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.jo.LoginData
 import com.example.jo.R
+import com.example.jo.admin.ItemDetailsActivity
 import com.example.jo.listener.IRecyclerClickListener
 import com.example.jo.models.Items
 import java.lang.StringBuilder
@@ -45,7 +47,10 @@ class ItemsAdapter(
 
         holder.setOnClickListener(object :IRecyclerClickListener{
             override fun onItemClickListener(view: View?, position: Int) {
-                addToCart(arrayList[position])
+                LoginData.key = arrayList[position].uid.toString()
+//                println("KEY = ${LoginData.key}")
+                var intent = Intent(context, ItemDetailsActivity::class.java)
+                context.startActivity(intent)
             }
         })
     }
@@ -75,8 +80,9 @@ class ItemsAdapter(
 
             itemView.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
-            println("click")
+            clickListener!!.onItemClickListener(v, adapterPosition)
         }
     }
 

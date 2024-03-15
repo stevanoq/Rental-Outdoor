@@ -13,6 +13,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.jo.LoginActivity
 import com.example.jo.LoginData
 import com.example.jo.R
 import com.example.jo.adapter.ItemsAdapter
@@ -25,6 +26,7 @@ class AdminActivity : AppCompatActivity() {
     var arrayList = ArrayList<Items>()
     lateinit var mRecyclerView: RecyclerView
     lateinit var btn_add : ImageButton
+    lateinit var btn_logout : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +34,21 @@ class AdminActivity : AppCompatActivity() {
 
         mRecyclerView = findViewById(R.id.recycler_item)
         btn_add = findViewById(R.id.add_button)
+        btn_logout = findViewById(R.id.btn_logout)
 
         btn_add.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        btn_logout.setOnClickListener {
+            LoginData.UID = ""
+            LoginData.key = ""
+            LoginData.editable = false
+            LoginData.email = ""
+            LoginData.username = ""
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -65,13 +79,15 @@ class AdminActivity : AppCompatActivity() {
                 val myObj = JSONObject(response)
                 val responseCode = myObj["code"].toString().toInt()
                 val responseMessage = myObj["message"].toString()
-                val items = myObj["data"]
-                val array = JSONArray(items.toString())
 
-                if (responseCode == 400){
+
+                if (responseCode == 404 ){
+                    loading.dismiss()
                     Toast.makeText(this, "$responseMessage", Toast.LENGTH_LONG).show()
                 }
                 else{
+                    val items = myObj["data"]
+                    val array = JSONArray(items.toString())
                     if (array?.length() == 0){
                         loading.dismiss()
                         Toast.makeText(this, "Items not found", Toast.LENGTH_SHORT).show()
